@@ -1,112 +1,136 @@
-# Đề 9 — Phân Tích Chất Lượng Nước (Water Quality Analysis)
+# 💧 Đề 9 — Phân Tích Chất Lượng Nước (Water Quality Analysis)
 
-> Môn: Data Mining | Đề tài số 9 | Dataset: Kaggle Water Quality
+**"Hành trình giải mã sự sống qua từng giọt nước"**
 
-## 📋 Mô tả bài toán
+Nước là khởi nguồn của sự sống, nhưng không phải nguồn nước nào cũng an toàn. Trong thực tế, việc xét nghiệm y tế cho từng mẫu nước đòi hỏi chi phí khổng lồ và thời gian chờ đợi lâu. Đặt trong bối cảnh đó, **Nhóm 2** chúng tôi đã tiếp nhận bài toán phân tích chất lượng nước từ bộ dữ liệu Kaggle. 
 
-Phân tích dữ liệu chất lượng nước từ **3,276 mẫu nước** với **9 chỉ số hóa-lý** để:
-1. **Khai phá tri thức** (Data Mining): Rời rạc hoá chỉ số → Apriori tìm luật kết hợp chỉ số cùng vượt ngưỡng
-2. **Phân cụm** (Clustering): Phân nhóm nguồn nước theo profile, profiling cụm + cảnh báo rủi ro
-3. **Phân lớp** (Classification): Phân loại an toàn/không an toàn với F1, PR-AUC, phân tích lỗi gần ngưỡng
-4. **Bán giám sát** (Semi-supervised): Giả lập ít nhãn, label spreading k-NN, learning curve
-5. **Hồi quy** (Regression): Dự báo WQI liên tục với MAE/RMSE
+Mục tiêu của chúng tôi không chỉ là những con số khô khan, mà là xây dựng một hệ thống khai phá dữ liệu (Data Mining) và học máy (Machine Learning) có khả năng: tìm ra quy luật ẩn giấu, khoanh vùng rủi ro, và dự báo độ an toàn của nước chỉ từ những cảm biến đo lường cơ bản (như độ pH, độ đục). Đây là giải pháp hướng tới việc giám sát chất lượng nước với chi phí thấp và tốc độ theo thời gian thực.
 
-## 🗂️ Dataset
+### 👥 Đội ngũ thực hiện - Nhóm 2
+* **Nguyễn Văn Vinh**
+* **Đỗ Văn Vinh**
+* **Bạch Ngọc Lương**
+* **Lại Thành Đoàn**
 
-| Thuộc tính | Chi tiết |
+> **Môn học:** Data Mining | **Đề tài:** Số 9 | **Dataset:** Kaggle Water Quality
+
+---
+
+## 🎯 Mô tả bài toán & Phương pháp tiếp cận
+
+Dự án phân tích **3,276 mẫu nước** với **9 chỉ số hóa-lý** thông qua 5 chặng đường phân tích chuyên sâu:
+1. **Khai phá tri thức (Data Mining):** Rời rạc hoá các chỉ số thành mức độ (Low/Medium/High) → Áp dụng thuật toán **Apriori** để tìm ra các "luật kết hợp" chết người (ví dụ: khi nào các chất độc hại cùng đồng loạt vượt ngưỡng).
+2. **Phân cụm (Clustering):** Sử dụng **K-Means** để nhóm các nguồn nước theo đặc điểm hóa học, từ đó "khoanh vùng" và phát đi cảnh báo rủi ro cho từng cụm.
+3. **Phân lớp (Classification):** Xây dựng ranh giới sinh tử: An toàn hay Không an toàn? Sử dụng các chỉ số khắt khe như F1-macro, PR-AUC để vượt qua thách thức mất cân bằng dữ liệu, và phân tích kỹ các lỗi sai sát ngưỡng.
+4. **Học Bán giám sát (Semi-supervised):** Mô phỏng kịch bản đời thực khi "tiền cạn túi" — chỉ có một số ít mẫu được dán nhãn (xét nghiệm y tế đắt đỏ). Chúng tôi dùng **Label Spreading k-NN** để lan truyền tri thức sang các mẫu chưa biết, vẽ learning curve để tìm điểm hòa vốn.
+5. **Hồi quy (Regression):** Xây dựng thang điểm WQI (Water Quality Index) liên tục và dùng Machine Learning để dự báo.
+
+---
+
+## 📊 Khám phá Bộ dữ liệu (Dataset)
+
+Bộ dữ liệu là tập hợp những manh mối quý giá được thu thập từ nhiều vùng nước khác nhau.
+
+| Tiêu chí | Chi tiết |
 |------------|----------|
-| Nguồn | [Kaggle — Water Quality](https://www.kaggle.com/datasets/mssmartypants/water-quality) |
-| Kích thước | 3,276 mẫu × 10 cột |
-| Target | `Potability` (0=Không an toàn, 1=An toàn) |
-| Đặc điểm | ~39% an toàn → mất cân bằng lớp |
+| **Nguồn gốc** | [Kaggle — Water Quality](https://www.kaggle.com/datasets/mssmartypants/water-quality) |
+| **Kích thước** | 3,276 mẫu × 10 cột |
+| **Target** | `Potability` (0 = Không an toàn, 1 = An toàn) |
+| **Đặc điểm** | Chỉ có ~39% nước là an toàn → Dữ liệu mất cân bằng (Class Imbalance) |
 
-### Các cột dữ liệu
+### Từ điển Dữ liệu (Chiếu theo chuẩn WHO)
 
-| Cột | Đơn vị | Mô tả | Ngưỡng WHO |
+| Cột | Đơn vị | Mô tả | Ngưỡng an toàn (WHO) |
 |-----|--------|-------|------------|
-| `ph` | — | Độ pH (0–14) | 6.5–8.5 |
-| `Hardness` | mg/L | Độ cứng canxi/magie | <300 |
-| `Solids` | ppm | Tổng chất rắn hoà tan (TDS) | <500 |
-| `Chloramines` | ppm | Chlor hữu cơ | <4 |
-| `Sulfate` | mg/L | Sunfat | <250 |
-| `Conductivity` | μS/cm | Độ dẫn điện | <400 |
-| `Organic_carbon` | ppm | Carbon hữu cơ | <2 |
-| `Trihalomethanes` | μg/L | Trihalomethane | <80 |
-| `Turbidity` | NTU | Độ đục | <4 |
-| `Potability` | 0/1 | **TARGET**: Có uống được không | — |
+| `ph` | — | Độ pH của nước (0–14) | 6.5 – 8.5 |
+| `Hardness` | mg/L | Độ cứng tổng (Canxi/Magie) | < 300 |
+| `Solids` | ppm | Tổng chất rắn hoà tan (TDS) | < 500 |
+| `Chloramines` | ppm | Lượng Chloramine dùng khử trùng | < 4.0 |
+| `Sulfate` | mg/L | Nồng độ Sunfat | < 250 |
+| `Conductivity` | μS/cm | Độ dẫn điện | < 400 |
+| `Organic_carbon` | ppm | Tổng lượng Carbon hữu cơ | < 2.0 |
+| `Trihalomethanes`| μg/L | Hợp chất THM (nguy cơ ung thư) | < 80 |
+| `Turbidity` | NTU | Độ đục (chất lơ lửng) | < 4.0 |
+| `Potability` | 0/1 | **TARGET**: Quyết định sinh tử - Có uống được không? | — |
 
-## 🏗️ Cấu trúc Repository
+---
 
-```
+## 🏗 Cấu trúc Trụ sở (Repository Blueprint)
+
+Để quản lý dự án một cách khoa học và dễ dàng tái hiện lại (reproducible), nhóm đã thiết kế một kiến trúc thư mục chuẩn mực hóa:
+
+```text
 DATA_MINING_PROJECT/
-├── README.md                   # Tài liệu này
-├── requirements.txt            # Phụ thuộc Python
-├── .gitignore                  # Loại trừ data/raw, *.pkl
+├── README.md                  ← Báo cáo tổng quan dự án (Bạn đang ở đây)
+├── requirements.txt           ← Danh sách "vũ khí" (Thư viện Python)
+├── .gitignore                 ← Bộ lọc Git (Giấu data raw và files rác)
 ├── configs/
-│   └── params.yaml             # Siêu tham số tập trung (seed, k, min_support...)
+│   └── params.yaml            ← Bảng điều khiển trung tâm (seed, k, thresholds...)
 ├── data/
-│   ├── raw/                    # ❌ KHÔNG commit (thêm vào .gitignore)
+│   ├── raw/                   ← Kho lưu trữ nguyên thủy (KHÔNG commit)
 │   │   └── water_potability.csv
-│   └── processed/              # ✅ Kết quả sau tiền xử lý (.parquet)
-├── notebooks/                  # Chạy theo thứ tự 01 → 05
+│   └── processed/             ← Dữ liệu đã qua tinh chế (.parquet)
+├── notebooks/                 ← Nhật ký nghiên cứu (Chạy theo thứ tự 01 → 05)
 │   ├── 01_eda.ipynb
 │   ├── 02_preprocess_features.ipynb
 │   ├── 03_mining_association_clustering.ipynb
 │   ├── 04_modeling_classification.ipynb
 │   ├── 04b_semi_supervised.ipynb
 │   └── 05_evaluation_report.ipynb
-├── src/                        # Module hoá (gọi từ notebooks)
+├── src/                       ← Lõi hệ thống (Module hóa)
 │   ├── data/
-│   │   ├── loader.py           # Đọc CSV, validate schema
-│   │   └── cleaner.py          # Imputation, outlier, encoding, scaling
+│   │   ├── loader.py          ← Nạp dữ liệu
+│   │   └── cleaner.py         ← Làm sạch, xử lý missing, scaling
 │   ├── features/
-│   │   └── builder.py          # Rời rạc hoá, WQI, feature selection
+│   │   └── builder.py         ← Kỹ nghệ đặc trưng (WQI, Rời rạc hóa)
 │   ├── mining/
-│   │   ├── association.py      # Apriori/FP-Growth + luật kết hợp
-│   │   └── clustering.py       # KMeans/DBSCAN + profiling + elbow
+│   │   ├── association.py     ← Tìm quy luật (Apriori/FP-Growth)
+│   │   └── clustering.py      ← Phân cụm (KMeans/DBSCAN)
 │   ├── models/
-│   │   ├── supervised.py       # RF, XGB, LR + k-fold CV + baselines
-│   │   └── semi_supervised.py  # Label spreading k-NN + learning curve
+│   │   ├── supervised.py      ← Học có giám sát (RF, XGB, LR)
+│   │   └── semi_supervised.py ← Học bán giám sát (Label spreading)
 │   ├── evaluation/
-│   │   ├── metrics.py          # F1, PR-AUC, ROC-AUC, MAE, RMSE, sMAPE
-│   │   └── report.py           # Confusion matrix, residual plot, insights
+│   │   ├── metrics.py         ← Thước đo (F1, PR-AUC, MAE, RMSE...)
+│   │   └── report.py          ← Xuất báo cáo, ma trận nhầm lẫn
 │   └── visualization/
-│       └── plots.py            # Tất cả hàm vẽ biểu đồ
+│       └── plots.py           ← Công cụ vẽ biểu đồ trực quan
 ├── scripts/
-│   └── run_pipeline.py         # ▶ Chạy toàn bộ pipeline 1 lệnh
+│   └── run_pipeline.py        ← Công tắc khởi động toàn bộ quy trình
 └── outputs/
-    ├── figures/                # Ảnh biểu đồ (.png/.svg)
-    ├── tables/                 # Bảng kết quả (.csv)
-    └── models/                 # Model đã train (.pkl)
+    ├── figures/               ← Thư viện ảnh (.png)
+    ├── tables/                ← Bảng tổng hợp (.csv)
+    └── models/                ← Tủ chứa mô hình đã huấn luyện (.pkl)
 ```
 
-## ⚡ Hướng dẫn chạy nhanh
+---
 
-### 1. Cài đặt
+## 🚀 Hướng dẫn Vận hành (Quick Start)
 
+Tham gia vào quá trình phân tích cùng Nhóm 2 chỉ với 4 bước đơn giản:
+
+### 1. Chuẩn bị môi trường
 ```bash
-git clone https://github.com/your-username/water-quality-mining.git
+git clone [https://github.com/your-username/water-quality-mining.git](https://github.com/your-username/water-quality-mining.git)
 cd DATA_MINING_PROJECT
 pip install -r requirements.txt
 ```
 
-### 2. Tải dataset
-
+### 2. Thu thập dữ liệu
 ```bash
-# Tải từ Kaggle (cần Kaggle API key)
+# Sử dụng Kaggle API để lấy dữ liệu về kho chứa
 kaggle datasets download -d mssmartypants/water-quality -p data/raw/ --unzip
-# Hoặc tải thủ công từ: https://www.kaggle.com/datasets/mssmartypants/water-quality
-# Đặt file vào: data/raw/water_potability.csv
+
+# Hoặc tải thủ công từ Kaggle và đặt file vào: data/raw/water_potability.csv
 ```
 
-### 3. Chạy toàn bộ pipeline
-
+### 3. Khởi động Cỗ máy tự động
+Chỉ với 1 dòng lệnh, toàn bộ pipeline từ làm sạch đến đánh giá sẽ được thực thi:
 ```bash
 python scripts/run_pipeline.py
 ```
 
-### 4. Chạy từng notebook theo thứ tự
-
+### 4. Khám phá từng bước (Dành cho nhà nghiên cứu)
+Đi sâu vào từng phân tích qua Jupyter Notebook:
 ```bash
 jupyter notebook notebooks/01_eda.ipynb
 jupyter notebook notebooks/02_preprocess_features.ipynb
@@ -116,19 +140,25 @@ jupyter notebook notebooks/04b_semi_supervised.ipynb
 jupyter notebook notebooks/05_evaluation_report.ipynb
 ```
 
-## 🔬 Kết quả chính
+---
 
-| Tiêu chí | Phương pháp | Kết quả |
-|----------|-------------|---------|
-| Association Rules | Apriori (sup=0.2, conf=0.7) | 12 luật mạnh, lift>2.0 |
-| Clustering | K-Means (k=3) | Silhouette=0.58, DBI=0.82 |
-| Classification | Random Forest | F1=0.87, PR-AUC=0.91 |
-| Semi-supervised | Label Spreading k-NN | +5.2% F1 vs supervised-only |
-| Regression | XGBoost (WQI) | MAE=4.2, RMSE=6.8, R²=0.83 |
+## 🏆 Thành quả Đạt được
 
-## ⚙️ Cấu hình
+Sau chuỗi ngày đào sâu vào dữ liệu, đây là những kết quả nổi bật nhất mà mô hình mang lại:
 
-Tất cả siêu tham số được quản lý trong `configs/params.yaml`:
+| Chuyên mục | Phương pháp áp dụng | Kết quả & Độ chính xác |
+|:---|:---|:---|
+| **Association Rules** | Apriori (sup=0.2, conf=0.7) | Bóc tách 12 luật cảnh báo mạnh (Lift > 2.0) |
+| **Clustering** | K-Means (k=3) | Gom cụm tốt với Silhouette=0.58, DBI=0.82 |
+| **Classification** | Random Forest | Khả năng nhận diện: F1-macro=0.87, PR-AUC=0.91 |
+| **Semi-supervised** | Label Spreading k-NN | Tiết kiệm chi phí nhãn: Tăng +5.2% F1 so với chỉ dùng nhãn gốc |
+| **Regression** | XGBoost (Dự báo WQI) | Sai số thấp: MAE=4.2, RMSE=6.8, R²=0.83 |
+
+---
+
+## ⚙️ Bảng Điều Khiển (Config)
+
+Chúng tôi tin vào nguyên tắc thiết kế có khả năng tái lập (Reproducibility). Mọi tinh chỉnh siêu tham số đều được tập trung duy nhất tại `configs/params.yaml`:
 
 ```yaml
 random_seed: 42
@@ -145,24 +175,17 @@ semi_supervised:
   n_neighbors: 7
 ```
 
-## 📁 Outputs
-
-Sau khi chạy pipeline, kết quả được lưu trong `outputs/`:
-- `figures/`: biểu đồ EDA, confusion matrix, learning curve, cluster heatmap
-- `tables/`: metric tables, association rules CSV, cluster profiles
-- `models/`: `rf_classifier.pkl`, `xgb_regressor.pkl`
-
-## 🔄 Tái hiện kết quả
-
+Để tái hiện lại 100% kết quả như trong báo cáo của chúng tôi:
 ```bash
 # Đảm bảo đã đặt seed=42 trong configs/params.yaml
 python scripts/run_pipeline.py --config configs/params.yaml
-# Tất cả outputs sẽ khớp với báo cáo
 ```
 
-## 👤 Tác giả
+**Outputs thu được:**
+Mọi kết quả tinh túy nhất sẽ tự động được lưu vào thư mục `outputs/`:
+* `figures/`: Biểu đồ EDA, Confusion Matrix, Learning Curve, Cluster Heatmap...
+* `tables/`: Các bảng chỉ số Metrics, Luật kết hợp (Association Rules CSV), Cluster profiles...
+* `models/`: Các mô hình tốt nhất đã đóng gói (`best_classifier.pkl`, `best_regressor.pkl`).
 
-- **Môn học**: Data Mining
-- **Đề tài**: 9 — Phân tích chất lượng nước
-- **Dataset**: Water Potability (Kaggle)
-- **Python**: 3.10+ | scikit-learn 1.3+ | pandas 2.0+
+---
+*Báo cáo được thực hiện với Python 3.10+ | scikit-learn 1.3+ | pandas 2.0+*
