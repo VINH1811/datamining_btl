@@ -1,0 +1,35 @@
+# ── Core ──────────────────────────────────────
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.11.0
+
+# ── Machine Learning ──────────────────────────
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+imbalanced-learn>=0.11.0        # SMOTE, BorderlineSMOTE
+
+# ── Association Rules ─────────────────────────
+mlxtend>=0.23.0                 # Apriori, FP-Growth, association_rules
+
+# ── Visualization ─────────────────────────────
+matplotlib>=3.7.0
+seaborn>=0.12.0
+plotly>=5.18.0
+
+# ── Notebook & Report ─────────────────────────
+jupyter>=1.0.0
+notebook>=7.0.0
+nbconvert>=7.0.0                # Notebook execution (--execute flag)
+
+# ── Data I/O ──────────────────────────────────
+pyarrow>=13.0.0                 # Parquet support
+openpyxl>=3.1.0                 # Excel export
+
+# ── Utilities ─────────────────────────────────
+pyyaml>=6.0.1                   # configs/params.yaml
+joblib>=1.3.0                   # Model serialization
+tqdm>=4.66.0                    # Progress bars
+python-dotenv>=1.0.0            # .env file support
+
+# ── Kaggle (optional, for auto download) ──────
+# kaggle>=1.5.16

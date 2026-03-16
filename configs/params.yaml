@@ -1,0 +1,79 @@
+# ================================================================
+# configs/params.yaml — Tham số toàn bộ pipeline Water Quality
+# Đề 9: Phân tích chất lượng nước uống (Kaggle Water Potability)
+# ================================================================
+
+project_name:   "Water Quality Analysis — Đề 9"
+dataset_path:   "data/raw/water_potability.csv"
+processed_path: "data/processed/water_clean.parquet"
+outputs_dir:    "outputs"
+random_seed:    42
+
+# ── Tiền xử lý (Rubric B) ───────────────────────────────────────
+preprocessing:
+  missing_strategy: "knn"      # knn | median | mean
+  knn_neighbors:    5
+  outlier_method:   "winsor"   # winsor | iqr | zscore | none
+  winsor_lower:     0.01       # clip tại percentile 1%
+  winsor_upper:     0.99       # clip tại percentile 99%
+  scaling:          "robust"   # robust | standard | minmax | none
+  test_size:        0.20
+  stratify:         true
+
+# ── Feature Engineering (Rubric B, G) ───────────────────────────
+features:
+  add_who_flags:    true
+  add_interactions: true
+  discretize_bins:  3
+  mining_discretize_strategy: "quantile"  # quantile cho Apriori (WHO 100% violated)
+  wqi_weights:
+    ph:              0.18
+    Hardness:        0.06
+    Solids:          0.12
+    Chloramines:     0.15
+    Sulfate:         0.08
+    Conductivity:    0.07
+    Organic_carbon:  0.10
+    Trihalomethanes: 0.14
+    Turbidity:       0.10
+
+# ── Phân cụm (Rubric C) ─────────────────────────────────────────
+clustering:
+  algorithm:        "kmeans"
+  k:                3
+  k_range:          [2, 8]
+  risk_threshold_pct: 0.60
+
+# ── Luật kết hợp (Rubric C) ─────────────────────────────────────
+# Potability được đưa vào transaction → tìm rule dạng {A,B}→{Potable/Not_Potable}
+# Kaggle: features gần độc lập (corr<0.1) nên min_lift hạ thấp
+association:
+  min_support:    0.10
+  min_confidence: 0.55
+  min_lift:       1.01
+  metric:         "lift"
+  max_len:        3
+
+# ── Phân lớp (Rubric D, E) ──────────────────────────────────────
+# v4: SMOTETomek + VotingClassifier(XGB+ExtraTrees+RandomForest) + threshold tuning
+classification:
+  cv_folds:      5
+  smote:         true          # True → SMOTETomek; False → không resample
+  smote_k:       5
+  use_xgboost:   true
+  xgb_n_iter:    20            # RandomizedSearchCV iterations
+  xgb_cv_folds:  3
+  ensemble:      true          # True → VotingClassifier; False → XGBoost only
+
+# ── Bán giám sát (Rubric F) ─────────────────────────────────────
+semi_supervised:
+  labeled_pct_list: [0.05, 0.10, 0.15, 0.20, 0.30]
+  n_neighbors:   7
+  alpha:         0.20
+  max_iter:      1000
+
+# ── Hồi quy WQI (Rubric D, E) ───────────────────────────────────
+regression:
+  n_estimators:  500
+  learning_rate: 0.03
+  max_depth:     6
