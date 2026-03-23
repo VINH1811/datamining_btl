@@ -220,12 +220,32 @@ class WaterClusterer:
 
         profile_df = pd.DataFrame(profile_data)
 
-        # Thêm nhãn rủi ro
+        # Thêm nhãn rủi ro - phân loại động dựa trên thứ hạng
         if "unsafe_ratio" in profile_df.columns and profile_df["unsafe_ratio"].notna().any():
-            profile_df["risk_level"] = profile_df["unsafe_ratio"].apply(
-                lambda x: "🔴 High Risk" if x > self.risk_threshold_pct
-                else ("🟡 Medium Risk" if x > 0.4 else "🟢 Low Risk")
-            )
+            # Sắp xếp theo unsafe_ratio giảm dần
+            sorted_profile = profile_df.sort_values("unsafe_ratio", ascending=False).reset_index(drop=True)
+            n_clusters = len(sorted_profile)
+            
+            # Phân loại động dựa trên số cluster
+            if n_clusters == 2:
+                # 2 clusters: High / Safe
+                risk_labels = ["🔴 Risk", "🟢 Safe"]
+            elif n_clusters == 3:
+                # 3 clusters: High / Medium / Safe
+                risk_labels = ["🔴 High Risk", "🟡 Medium Risk", "🟢 Safe"]
+            elif n_clusters >= 4:
+                # 4+ clusters: High / Medium-High / Medium-Low / Safe
+                risk_labels = ["🔴 High Risk"] + ["🟡 Medium Risk"] * (n_clusters - 2) + ["🟢 Safe"]
+            else:
+                # 1 cluster: Medium
+                risk_labels = ["🟡 Medium Risk"]
+            
+            # Gán risk level theo thứ hạng
+            risk_map = {}
+            for idx, (_, row) in enumerate(sorted_profile.iterrows()):
+                risk_map[int(row["cluster"])] = risk_labels[idx]
+            
+            profile_df["risk_level"] = profile_df["cluster"].map(risk_map)
 
         return profile_df
 

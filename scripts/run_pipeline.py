@@ -1756,8 +1756,12 @@ def main():
     )
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument(
-        "--notebooks", action="store_true",
-        help="Thực thi tất cả notebooks 01–05 sau khi chạy pipeline",
+        "--notebooks", action="store_true", default=True,
+        help="Thực thi tất cả notebooks 01–05 sau khi chạy pipeline (mặc định: True)",
+    )
+    parser.add_argument(
+        "--skip-notebooks", action="store_true",
+        help="Bỏ qua việc chạy notebooks (chỉ chạy pipeline)",
     )
     args = parser.parse_args()
 
@@ -1848,7 +1852,7 @@ def main():
     print(SEP)
 
     # ── Chạy notebooks nếu được yêu cầu ──────────────────────────
-    if args.notebooks:
+    if args.notebooks and not args.skip_notebooks:
         nb_result = run_notebooks(verbose=args.verbose)
         nb_total  = round(time.time() - total_start, 2)
         print(f"\n{SEP}")

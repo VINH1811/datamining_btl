@@ -1,0 +1,12 @@
+Task,Model,Metric,Score
+Classification,ZeroR (Baseline 1),F1-macro,0.3788
+Classification,LogisticReg (Baseline 2),F1-macro,0.8824
+Classification,RandomForest (best),F1-macro,0.8931
+Classification,RandomForest (best),ROC-AUC,0.953
+Classification,RandomForest (best),PR-AUC,0.9293
+Regression WQI,RandomForest Reg,MAE,1.1411
+Regression WQI,RandomForest Reg,RMSE,1.6592
+Regression WQI,RandomForest Reg,R2,0.949
+Semi-supervised,Supervised only (20%),F1-macro,0.874
+Semi-supervised,Label Spreading kNN,F1-macro,0.8747
+Semi-supervised,Label Spreading kNN,Gain vs Sup,0.0007

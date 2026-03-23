@@ -1,0 +1,5 @@
+,Model,MAE,RMSE,R²,sMAPE(%)
+1,XGBoost Reg,0.6463,1.0151,0.9809,3.75
+2,RandomForest Reg,1.1476,1.6701,0.9483,6.68
+3,Ridge (Baseline 2),3.7935,4.6546,0.5988,22.93
+4,MeanPredictor (Baseline 1),5.9343,7.3552,-0.0018,33.73

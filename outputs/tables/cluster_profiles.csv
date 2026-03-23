@@ -1,4 +1,4 @@
-cluster,n,pct,ph_mean,Hardness_mean,Solids_mean,Chloramines_mean,Sulfate_mean,Conductivity_mean,Organic_carbon_mean,Trihalomethanes_mean,Turbidity_mean,total_who_violations,avg_violations_per_sample,unsafe_ratio,risk_level
-0,812,24.8,6.961,197.546,33343.525,7.562,338.779,437.916,15.099,70.698,4.227,4884,6.01,0.777,🔴 High Risk
-1,1501,45.8,7.047,196.813,22380.877,7.195,337.286,433.706,14.426,68.411,4.072,8780,5.85,0.6,🟡 Medium Risk
-2,963,29.4,7.013,194.037,11808.671,7.003,333.939,426.181,13.905,66.501,3.928,5420,5.63,0.483,🟡 Medium Risk
+Cluster,N,N%,ph_mean,Hardness_mean,Solids_mean,Chloramines_mean,Sulfate_mean,Conductivity_mean,Organic_carbon_mean,Trihalomethanes_mean,Turbidity_mean,WHO_violations,WHO_viol/sample,unsafe_ratio,Risk
+0,812,24.8,6.96,197.55,33343.53,7.56,338.78,437.92,15.1,70.7,4.23,4884,6.01,0.777,🔴 High Risk
+1,1501,45.8,7.05,196.81,22380.88,7.19,337.29,433.71,14.43,68.41,4.07,8780,5.85,0.6,🟡 Medium Risk
+2,963,29.4,7.01,194.04,11808.67,7.0,333.94,426.18,13.91,66.5,3.93,5420,5.63,0.483,🟢 Safe

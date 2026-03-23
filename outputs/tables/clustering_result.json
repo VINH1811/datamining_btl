@@ -3,7 +3,6 @@
   "silhouette_score": 0.536,
   "davies_bouldin": 0.5627,
   "calinski_harabasz": 7285.35,
-  "inertia": 45986569303.99,
   "selection_method": "multi_metric_voting",
   "k2_wins": 1,
   "k3_wins": 2,
