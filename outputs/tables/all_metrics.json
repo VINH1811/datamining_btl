@@ -1,0 +1,46 @@
+{
+  "classification": {
+    "model": "Ensemble(XGB+ET+RF)",
+    "threshold": 0.52,
+    "f1_macro": 0.9,
+    "precision": 0.8587,
+    "recall": 0.9023,
+    "roc_auc": 0.9548,
+    "pr_auc": 0.9286,
+    "cv_f1_mean": 0.917,
+    "cv_f1_std": 0.0063,
+    "cv_roc_mean": 0.9744,
+    "cv_pr_mean": 0.9745,
+    "train_f1_mean": 0.9997,
+    "gap": 0.0171,
+    "confusion_matrix": [
+      [
+        362,
+        38
+      ],
+      [
+        25,
+        231
+      ]
+    ],
+    "tn": 362,
+    "fp": 38,
+    "fn": 25,
+    "tp": 231
+  },
+  "regression": {
+    "mae": 1.3565,
+    "rmse": 2.0318,
+    "r2": 0.948,
+    "smape": 8.57
+  },
+  "semi_supervised": {
+    "ssl_f1": 0.7573,
+    "sup_f1": 0.8617,
+    "improvement": -0.1044,
+    "labeled_pct": 0.2,
+    "n_labeled": 524
+  },
+  "n_rules": 78,
+  "generated": "2026-03-23"
+}

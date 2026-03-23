@@ -1,0 +1,61 @@
+{
+  "k_optimal": 3,
+  "silhouette_score": 0.536,
+  "davies_bouldin": 0.5627,
+  "calinski_harabasz": 7285.35,
+  "inertia": 45986569303.99,
+  "selection_method": "multi_metric_voting",
+  "k2_wins": 1,
+  "k3_wins": 2,
+  "elbow_analysis": [
+    {
+      "k": 2,
+      "inertia": 89986758629.34,
+      "silhouette": 0.554,
+      "davies_bouldin": 0.6034,
+      "calinski_harabasz": 5847.58
+    },
+    {
+      "k": 3,
+      "inertia": 45986569303.99,
+      "silhouette": 0.536,
+      "davies_bouldin": 0.5627,
+      "calinski_harabasz": 7285.35
+    },
+    {
+      "k": 4,
+      "inertia": 28310974404.99,
+      "silhouette": 0.5265,
+      "davies_bouldin": 0.5529,
+      "calinski_harabasz": 8567.91
+    },
+    {
+      "k": 5,
+      "inertia": 18981503523.41,
+      "silhouette": 0.5248,
+      "davies_bouldin": 0.5388,
+      "calinski_harabasz": 9983.39
+    },
+    {
+      "k": 6,
+      "inertia": 13304554475.41,
+      "silhouette": 0.5315,
+      "davies_bouldin": 0.5315,
+      "calinski_harabasz": 11670.15
+    },
+    {
+      "k": 7,
+      "inertia": 10417255686.64,
+      "silhouette": 0.5114,
+      "davies_bouldin": 0.5375,
+      "calinski_harabasz": 12568.74
+    },
+    {
+      "k": 8,
+      "inertia": 7977318186.16,
+      "silhouette": 0.5224,
+      "davies_bouldin": 0.5239,
+      "calinski_harabasz": 14205.93
+    }
+  ]
+}

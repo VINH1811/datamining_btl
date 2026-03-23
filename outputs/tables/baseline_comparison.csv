@@ -1,0 +1,6 @@
+Model,F1-macro,Precision,Recall,ROC-AUC
+Ensemble(XGB+ET+RF)+SMOTETomek (best),0.9,0.8971,0.9037,0.9548
+RandomForest (no SMOTETomek),0.896,0.8957,0.8962,0.9536
+LogisticRegression,0.8837,0.8794,0.892,0.9625
+DummyClassifier (Random),0.4832,0.4833,0.4832,0.4832
+ZeroR (Majority),0.3788,0.3049,0.5,0.5

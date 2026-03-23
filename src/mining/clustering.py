@@ -11,7 +11,7 @@ Phân cụm nguồn nước theo profile chỉ số:
 Usage:
     from src.mining.clustering import WaterClusterer
 
-    clusterer = WaterClusterer(algorithm="kmeans", k=3)
+    clusterer = WaterClusterer(algorithm="kmeans", k=2)
     labels = clusterer.fit(X)
     profile = clusterer.get_cluster_profiles(df)
     risk_map = clusterer.flag_risk_clusters(profile)
@@ -60,7 +60,7 @@ class WaterClusterer:
     def __init__(
         self,
         algorithm: str = "kmeans",
-        k: int = 3,
+        k: int = 2,
         dbscan_eps: float = 0.5,
         dbscan_min_samples: int = 5,
         random_seed: int = 42,
